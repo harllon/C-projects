@@ -28,12 +28,12 @@ typedef struct periodo{
 int main(){
     periodo periodo[10];
     char periodo_escolhido[10], periodo_digitado[10], disciplina_digitada[10], disciplina_escolhida[10], aluno_escolhido[15], disciplina_escolhida2[10], aluno_digitado[15];
-    int escolha, aluno_existe, aluno_esta_matriculado, aux2, periodo_controle, periodo_existe, i, salva_periodo, salva_disciplina, cont_aluno, cont_disc, aux, j, esta_matriculado, disciplina_existe;
+    int escolha, aluno_existe, aluno_esta_disciplina, aluno_esta_matriculado, aux2, periodo_controle, periodo_existe, i, salva_periodo, salva_disciplina, cont_aluno, cont_disc, aux, j, esta_matriculado, disciplina_existe;
     periodo_controle = cont_aluno = cont_disc = i = 0;
     while(1){
         printf("O que você deseja?\n1-Inserir um período\n2-Fazer consultas em um período\n0-Sair\n");
         scanf("%d", &escolha);
-        if(escolha == 4){
+        if(escolha == 0){
             break;
         }
         switch (escolha)
@@ -100,14 +100,24 @@ int main(){
                                 }
                             }
                             if(disciplina_existe == 1){
+                                aluno_esta_disciplina = 0;
+                                for(i=0; i<10; i++){
+                                    if(strcmp(periodo[salva_periodo].disciplina[salva_disciplina].aluno[i].nome_alu, aluno_digitado)==0){
+                                        aluno_esta_disciplina = 1;
+                                        break;
+                                    }
+                                }
                                 for(i=0; i<15; i++){
                                     if(strcmp(periodo[salva_periodo].disciplina[salva_disciplina].aluno[i].nome_alu, "0") == 0){
                                         cont_aluno = i;
                                         break;
                                     }
                                 }
-                                strcpy(periodo[salva_periodo].disciplina[salva_disciplina].aluno[cont_aluno].nome_alu, periodo[salva_periodo].aluno[aux].nome_alu);
-                                //cont_aluno++;
+                                if(aluno_esta_disciplina == 0){
+                                    strcpy(periodo[salva_periodo].disciplina[salva_disciplina].aluno[cont_aluno].nome_alu, periodo[salva_periodo].aluno[aux].nome_alu);
+                                }else{
+                                    printf("Estre aluno já está matriculado nesta disciplina\n");
+                                }
                             }else{
                                 printf("Essa disciplina não existe\n");
                             }
@@ -194,6 +204,38 @@ int main(){
                                 printf("Esse aluno não existe\n");
                             }
                         }
+                        if(escolha == 2){
+                            aluno_existe = 0;
+                            printf("Entre com o nome do aluno que deseja remover do período: ");
+                            scanf("%s", aluno_digitado);
+                            for(i=0; i<10; i++){
+                                if(strcmp(periodo[salva_periodo].aluno[i].nome_alu, aluno_digitado)==0){
+                                    aux = i;
+                                    aluno_existe = 1;
+                                }
+                            }
+                            if(aluno_existe == 1){
+                                for(i=aux; i<10; i++){
+                                    periodo[salva_periodo].aluno[i].codigo_alu = periodo[salva_periodo].aluno[i+1].codigo_alu;
+                                    strcpy(periodo[salva_periodo].aluno[i].nome_alu, periodo[salva_periodo].aluno[i+1].nome_alu);
+                                    strcpy(periodo[salva_periodo].aluno[i].cpf, periodo[salva_periodo].aluno[i+1].cpf);
+                                }
+                                for(i=0; i<10; i++){
+                                    for(j=0; j<10; j++){
+                                        if(strcmp(periodo[salva_periodo].disciplina[i].aluno[j].nome_alu, aluno_digitado)==0){
+                                            for(int k=j; k<10; k++){
+                                                periodo[salva_periodo].disciplina[i].aluno[k].codigo_alu = periodo[salva_periodo].disciplina[i].aluno[k+1].codigo_alu;
+                                                strcpy(periodo[salva_periodo].disciplina[i].aluno[k].nome_alu, periodo[salva_periodo].disciplina[i].aluno[k+1].nome_alu);
+                                                strcpy(periodo[salva_periodo].disciplina[i].aluno[k].cpf, periodo[salva_periodo].disciplina[i].aluno[k+1].cpf);
+                                            }
+                                        }
+                                    }
+                                    
+                                }
+                            }else{
+                                printf("Esse aluno não existe\n");
+                            }
+                        }
                         break;
 
                     case 3:
@@ -237,8 +279,8 @@ int main(){
                                 strcpy(periodo[salva_periodo].disciplina[i].professor, periodo[salva_periodo].disciplina[i+1].professor);
                                 for(j=0; j<10; j++){
                                     periodo[salva_periodo].disciplina[i].aluno[j].codigo_alu = periodo[salva_periodo].disciplina[i+1].aluno[j].codigo_alu;
-                                    strcpy(periodo[salva_periodo].disciplina[i].aluno[j].cpf, periodo[salva_periodo].disciplina[i].aluno[j].cpf);
-                                    strcpy(periodo[salva_periodo].disciplina[i].aluno[j].nome_alu, periodo[salva_periodo].disciplina[i].aluno[j].nome_alu);
+                                    strcpy(periodo[salva_periodo].disciplina[i].aluno[j].cpf, periodo[salva_periodo].disciplina[i+1].aluno[j].cpf);
+                                    strcpy(periodo[salva_periodo].disciplina[i].aluno[j].nome_alu, periodo[salva_periodo].disciplina[i+1].aluno[j].nome_alu);
                                 }
                             }
                         }else{
@@ -256,14 +298,15 @@ int main(){
                                 if(strcmp(aluno_escolhido, periodo[salva_periodo].disciplina[i].aluno[j].nome_alu) == 0){
                                     aux = i;
                                     aluno_existe = 1;
+                                    printf("%s\n", periodo[salva_periodo].disciplina[i].nome_dis);
                                 }
                             }
-                        }
+                        }/*
                         if(aluno_existe == 1){
                             printf("%s\n", periodo[salva_periodo].disciplina[aux].nome_dis);
                         }else{
                             printf("O aluno não existe\n");
-                        }
+                        }*/
                         break;
 
                     case 6:
